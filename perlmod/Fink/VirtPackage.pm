@@ -432,8 +432,6 @@ directories exist.
 					'1.4.2_AB-bCD-EFG.H, x86_64:	"Java SE 6"	/System/Library/Java/JavaVirtualMachines/1.4.2.jdk/Contents/Home',
 					'1.5.0_AB-bCD-EFG.H, x86_64:	"Java SE 6"	/System/Library/Java/JavaVirtualMachines/1.5.0.jdk/Contents/Home',
 					'1.6.0_AB-bCD-EFG.H, x86_64:	"Java SE 6"	/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home', # legacy location
-					'1.7.0_XY, x86_64:	"Java SE 7"	/Library/Java/JavaVirtualMachines/jdk1.7.0_XY.jdk/Contents/Home',
-					'1.8.0_XY, x86_64:	"Java SE 8"	/Library/Java/JavaVirtualMachines/jdk1.8.0_XY.jdk/Contents/Home',
 					'9, x86_64:	"Java SE 9"	/Library/Java/JavaVirtualMachines/jdk-9.jdk/Contents/Home',
 					'9.0.Z, x86_64:	"Java SE 9"	/Library/Java/JavaVirtualMachines/jdk-9.0.Z.jdk/Contents/Home',
 					'10.0.Z, x86_64:	"Java SE 10"	/Library/Java/JavaVirtualMachines/jdk-10.0.Z.jdk/Contents/Home',
@@ -442,6 +440,9 @@ directories exist.
 					'13.0.Z, x86_64:	"OpenJDK 13.0.Z"	/Library/Java/JavaVirtualMachines/jdk-13.0.Z.jdk/Contents/Home',
 					'14.0.Z, x86_64:	"OpenJDK 14.0.Z"	/Library/Java/JavaVirtualMachines/jdk-14.0.Z.jdk/Contents/Home',
 					'15.0.Z, x86_64:	"OpenJDK 15.0.Z"	/Library/Java/JavaVirtualMachines/jdk-15.0.Z.jdk/Contents/Home',
+					'17.0.Z, x86_64:	"OpenJDK 17.0.Z"	/Library/Java/JavaVirtualMachines/jdk-17.0.Z.jdk/Contents/Home',
+					'18.0.Z, x86_64:	"OpenJDK 18.0.Z"	/Library/Java/JavaVirtualMachines/jdk-18.0.Z.jdk/Contents/Home',
+					'19.0.Z, x86_64:	"OpenJDK 19.0.Z"	/Library/Java/JavaVirtualMachines/jdk-19.0.Z.jdk/Contents/Home',
 					);
 	my ($javadir, $latest_java, $latest_javadev, $java_test_dir, $java_cmd_dir, $java_inc_dir);
 	my $arch = Fink::FinkVersion::get_arch();
@@ -607,44 +608,6 @@ END
 			$hash->{descdetail}  = $legacy_boilerplate;
 			$hash->{compilescript} = &gen_compile_script($hash);
 			$self->{$hash->{package}} = $hash unless (exists $self->{$hash->{package}});
-
-		} elsif ($ver =~ /(1)\.([78])\.(0)_XY/) {
-			my $real_ver = "$1.$2.$3";
-			my $short_ver = $1.$2; 
-			my $oracle_boilerplate = <<END;
-This package represents the currently installed version
-of Java $real_ver.  If this package shows as not being installed,
-you must download the corresponding Java JDK from Oracle at:
-
-  http://www.oracle.com/technetwork/java/javase/downloads/index.html
-  
-(registration required).  
-
-END
-			$hash = {};
-			$hash->{package}     = "system-java$short_ver";
-			$hash->{status}      = STATUS_ABSENT;
-			$hash->{version}     = "$real_ver-1";
-			$hash->{description} = "[virtual package representing Java $real_ver]";
-			$hash->{homepage}    = "http://www.finkproject.org/faq/usage-general.php#virtpackage";
-			$hash->{provides}    = 'system-java, jdbc, jdbc2, jdbc3, jdbc-optional';
-			$hash->{descdetail}  = $oracle_boilerplate;
-			$hash->{compilescript} = &gen_compile_script($hash);
-			unless (exists $self->{$hash->{package}}) {
-				$self->{$hash->{package}} = $hash ;
-				print STDERR "  - $real_ver... not present on system\n" if ($options{debug});	
-			}
-			
-			$hash = {};
-			$hash->{package}     = "system-java$short_ver-dev";
-			$hash->{status}      = STATUS_ABSENT;
-			$hash->{version}     = "$real_ver-1";
-			$hash->{description} = "[virtual package representing Java $real_ver development headers]";
-			$hash->{homepage}    = "http://www.finkproject.org/faq/usage-general.php#virtpackage";
-			$hash->{descdetail}  = $oracle_boilerplate;
-			$hash->{compilescript} = &gen_compile_script($hash);
-			$self->{$hash->{package}} = $hash unless (exists $self->{$hash->{package}});
-		
 		} elsif ($ver =~ /^(\d+)$/ or $ver =~ /^(\d+)\..*Z/ ) {  # 9 and later
 			my $real_ver = "$1";
 			my $short_ver = $1; 
